@@ -1,0 +1,59 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1240" height="368" viewBox="0 0 1240 368" role="img" aria-label="zcode-auto-resume banner">
+  <defs>
+    <linearGradient id="card" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#0e1a2b"/>
+      <stop offset="1" stop-color="#16283f"/>
+    </linearGradient>
+    <linearGradient id="app" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#8FA8CE"/>
+      <stop offset="0.55" stop-color="#B39DCE"/>
+      <stop offset="1" stop-color="#93BFA8"/>
+    </linearGradient>
+    <filter id="soft" x="-40%" y="-40%" width="180%" height="180%">
+      <feGaussianBlur stdDeviation="7"/>
+    </filter>
+    <filter id="glow" x="-30%" y="-30%" width="160%" height="160%">
+      <feGaussianBlur stdDeviation="18" result="b"/>
+      <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+  </defs>
+
+  <rect x="8" y="8" width="1224" height="352" rx="24" fill="url(#card)"/>
+  <rect x="8" y="8" width="1224" height="352" rx="24" fill="none" stroke="#2c4360" stroke-width="1.5"/>
+
+  <!-- 应用图标（与插件图标同款） -->
+  <g transform="translate(72 74)">
+    <rect width="176" height="176" rx="40" fill="url(#app)"/>
+    <g filter="url(#soft)">
+      <circle cx="38" cy="36" r="41" fill="#F6F0E2" opacity="0.27"/>
+      <circle cx="154" cy="142" r="46" fill="#8FB8A5" opacity="0.31"/>
+      <circle cx="148" cy="41" r="33" fill="#D9A8B8" opacity="0.22"/>
+      <circle cx="27" cy="153" r="35" fill="#C9BCE2" opacity="0.25"/>
+    </g>
+    <path d="M 111 47.6 A 46.5 46.5 0 1 1 47.6 64.3" fill="none" stroke="#F6F0E2" stroke-width="15" stroke-linecap="round"/>
+    <polygon points="19.1,0 -10.9,13.7 -10.9,-13.7" transform="translate(47.6 64.3) rotate(-60)" fill="#F6F0E2"/>
+    <polygon points="75,68.5 113.5,88 75,107.5" fill="#F6F0E2"/>
+  </g>
+
+  <!-- 标题与副标题 -->
+  <text x="292" y="132" font-family="Segoe UI, PingFang SC, Microsoft YaHei, sans-serif" font-size="52" font-weight="700" fill="#f2f6fb">zcode-auto-resume</text>
+  <text x="294" y="176" font-family="Segoe UI, PingFang SC, Microsoft YaHei, sans-serif" font-size="24" fill="#aebfd4">Zcode 因「系统繁忙」等临时错误中断时，自动替你输入「继续」</text>
+
+  <!-- 功能药丸 -->
+  <g font-family="Segoe UI, PingFang SC, Microsoft YaHei, sans-serif" font-size="19" fill="#cdd9e8">
+    <rect x="294"  y="200" width="222" height="40" rx="20" fill="#1d3450"/><text x="405"  y="226" text-anchor="middle">Stop 钩子自动继续</text>
+    <rect x="528"  y="200" width="150" height="40" rx="20" fill="#1d3450"/><text x="603"  y="226" text-anchor="middle">错误分类</text>
+    <rect x="690"  y="200" width="150" height="40" rx="20" fill="#1d3450"/><text x="765"  y="226" text-anchor="middle">自适应退避</text>
+    <rect x="852"  y="200" width="150" height="40" rx="20" fill="#1d3450"/><text x="927"  y="226" text-anchor="middle">循环守卫</text>
+    <rect x="294"  y="252" width="150" height="40" rx="20" fill="#1d3450"/><text x="369"  y="278" text-anchor="middle">截断恢复</text>
+    <rect x="456"  y="252" width="162" height="40" rx="20" fill="#1d3450"/><text x="537"  y="278" text-anchor="middle">空响应重试</text>
+    <rect x="630"  y="252" width="272" height="40" rx="20" fill="#1d3450"/><text x="766"  y="278" text-anchor="middle">/auto-continue 直连命令</text>
+    <rect x="914"  y="252" width="162" height="40" rx="20" fill="#1d3450"/><text x="995"  y="278" text-anchor="middle">误报双重防护</text>
+  </g>
+
+  <!-- 页脚 -->
+  <text x="294" y="326" font-family="Consolas, Menlo, monospace" font-size="18" fill="#5f7b9c">unofficial plugin · MIT · ZCode Hooks (Stop / UserPromptSubmit) · 零依赖 Node</text>
+
+  <!-- 角落氛围光 -->
+  <ellipse cx="1150" cy="40" rx="180" ry="90" fill="#2a4a74" opacity="0.35" filter="url(#glow)"/>
+</svg>

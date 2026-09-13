@@ -1,0 +1,237 @@
+{
+  "schema_version": 2,
+  "diagram_type": "workflow",
+  "meta": {
+    "title": "zcode-auto-resume 恢复流程",
+    "locale": "zh-CN",
+    "quality_profile": "showcase",
+    "views": [
+      {
+        "id": "auto-resume",
+        "label": "自动恢复主链",
+        "focus": [
+          "turn_end",
+          "collect",
+          "classify",
+          "guard",
+          "inject",
+          "resume"
+        ],
+        "note": "临时性故障从检测到注入继续指令的完整主链。"
+      },
+      {
+        "id": "give-up",
+        "label": "放弃出口",
+        "focus": [
+          "classify",
+          "permanent",
+          "guard",
+          "skip"
+        ],
+        "note": "重试无益或达到上限时如实放行，绝不空转。"
+      }
+    ],
+    "output": "docs/recovery-flow.html"
+  },
+  "lanes": [
+    {
+      "id": "client",
+      "label": "ZCode 客户端"
+    },
+    {
+      "id": "hook",
+      "label": "auto-resume 钩子"
+    },
+    {
+      "id": "bail",
+      "label": "放弃出口",
+      "variant": "exception"
+    }
+  ],
+  "phases": [
+    {
+      "id": "detect",
+      "label": "检测",
+      "fromCol": 0,
+      "toCol": 1
+    },
+    {
+      "id": "classify",
+      "label": "分类",
+      "fromCol": 2,
+      "toCol": 3,
+      "variant": "emphasis"
+    },
+    {
+      "id": "recover",
+      "label": "恢复",
+      "fromCol": 4,
+      "toCol": 5
+    }
+  ],
+  "groups": [
+    {
+      "id": "engine",
+      "label": "判定引擎",
+      "lane": "hook",
+      "fromCol": 1,
+      "toCol": 4,
+      "variant": "emphasis"
+    },
+    {
+      "id": "bailout",
+      "label": "重试无益即放弃",
+      "lane": "bail",
+      "fromCol": 3,
+      "toCol": 5,
+      "variant": "security"
+    }
+  ],
+  "mainPath": [
+    "turn_end",
+    "collect",
+    "classify",
+    "guard",
+    "inject",
+    "resume"
+  ],
+  "nodes": [
+    {
+      "id": "turn_end",
+      "lane": "client",
+      "col": 0,
+      "type": "external",
+      "label": "回合结束",
+      "sublabel": "Stop 钩子触发",
+      "width": 128
+    },
+    {
+      "id": "collect",
+      "lane": "hook",
+      "col": 1,
+      "type": "backend",
+      "label": "采集证据",
+      "sublabel": "最后消息 + transcript",
+      "width": 148
+    },
+    {
+      "id": "classify",
+      "lane": "hook",
+      "col": 2,
+      "type": "security",
+      "label": "错误分类",
+      "sublabel": "永久 → 临时 → 截断/空",
+      "width": 152
+    },
+    {
+      "id": "permanent",
+      "lane": "bail",
+      "col": 3,
+      "type": "security",
+      "label": "永久性错误",
+      "sublabel": "认证 · 余额 · 模型 · 上下文",
+      "width": 156
+    },
+    {
+      "id": "guard",
+      "lane": "hook",
+      "col": 3,
+      "type": "backend",
+      "label": "退避与守卫",
+      "sublabel": "10s→60s · 计数 · 循环守卫",
+      "width": 160
+    },
+    {
+      "id": "inject",
+      "lane": "hook",
+      "col": 4,
+      "type": "frontend",
+      "label": "注入继续指令",
+      "sublabel": "decision: block + reason",
+      "width": 156
+    },
+    {
+      "id": "skip",
+      "lane": "bail",
+      "col": 5,
+      "type": "external",
+      "label": "放行结束",
+      "sublabel": "如实在日志中记录",
+      "width": 136
+    },
+    {
+      "id": "resume",
+      "lane": "client",
+      "col": 5,
+      "type": "frontend",
+      "label": "模型自动继续",
+      "sublabel": "从中断处接着干",
+      "width": 148
+    }
+  ],
+  "edges": [
+    {
+      "id": "e1",
+      "from": "turn_end",
+      "to": "collect",
+      "label": "Stop 触发",
+      "role": "main"
+    },
+    {
+      "id": "e2",
+      "from": "collect",
+      "to": "classify",
+      "label": "文本证据",
+      "role": "main"
+    },
+    {
+      "id": "e3",
+      "from": "classify",
+      "to": "permanent",
+      "label": "401/403 · 余额 · 模型 · 上下文超限",
+      "role": "error"
+    },
+    {
+      "id": "e4",
+      "from": "classify",
+      "to": "guard",
+      "label": "临时错误 · 截断 · 空响应",
+      "role": "main"
+    },
+    {
+      "id": "e5",
+      "from": "permanent",
+      "to": "skip",
+      "label": "不重试",
+      "role": "error"
+    },
+    {
+      "id": "e6",
+      "from": "guard",
+      "to": "inject",
+      "label": "冷却后未达上限",
+      "role": "main"
+    },
+    {
+      "id": "e7",
+      "from": "guard",
+      "to": "skip",
+      "label": "达上限 · 循环守卫 · 已暂停",
+      "role": "branch"
+    },
+    {
+      "id": "e8",
+      "from": "inject",
+      "to": "resume",
+      "label": "注入恢复指令",
+      "role": "main"
+    },
+    {
+      "id": "e9",
+      "from": "resume",
+      "to": "turn_end",
+      "label": "下一回合结束再检查",
+      "role": "return"
+    }
+  ]
+}

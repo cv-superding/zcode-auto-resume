@@ -1,0 +1,11 @@
+{
+  "name": "zcode-auto-resume",
+  "version": "0.1.0",
+  "description": "当 Zcode 因「系统繁忙 / 限流 / 5xx / 超时 / 网络错误」等临时性错误中断时，自动注入继续指令恢复任务；永久性错误（认证、余额、模型不存在等）不盲目重试。",
+  "author": {
+    "name": "zcode-auto-resume contributors"
+  },
+  "license": "MIT",
+  "commands": "commands",
+  "hooks": "hooks"
+}

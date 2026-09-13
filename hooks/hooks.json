@@ -1,0 +1,30 @@
+{
+  "hooks": {
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "process",
+            "command": "node",
+            "args": ["${ZCODE_PLUGIN_ROOT}/hooks/auto-continue.mjs"],
+            "timeoutMs": 120000,
+            "statusMessage": "auto-continue: 检测回合结束原因，判断是否自动继续"
+          }
+        ]
+      }
+    ],
+    "UserPromptSubmit": [
+      {
+        "hooks": [
+          {
+            "type": "process",
+            "command": "node",
+            "args": ["${ZCODE_PLUGIN_ROOT}/hooks/auto-continue.mjs"],
+            "timeoutMs": 10000,
+            "statusMessage": "auto-continue: 重置重试计数"
+          }
+        ]
+      }
+    ]
+  }
+}
