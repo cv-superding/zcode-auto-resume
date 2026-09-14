@@ -1,0 +1,10 @@
+{
+  "name": "my-plugin",
+  "version": "0.1.0",
+  "description": "一句话说清这个插件干什么。",
+  "author": {
+    "name": "your-name"
+  },
+  "license": "MIT",
+  "hooks": "hooks"
+}

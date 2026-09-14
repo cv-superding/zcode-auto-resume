@@ -1,0 +1,30 @@
+{
+  "hooks": {
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "process",
+            "command": "node",
+            "args": ["${ZCODE_PLUGIN_ROOT}/hooks/engine.mjs"],
+            "timeoutMs": 120000,
+            "statusMessage": "my-plugin: 回合结束检查"
+          }
+        ]
+      }
+    ],
+    "UserPromptSubmit": [
+      {
+        "hooks": [
+          {
+            "type": "process",
+            "command": "node",
+            "args": ["${ZCODE_PLUGIN_ROOT}/hooks/engine.mjs"],
+            "timeoutMs": 10000,
+            "statusMessage": "my-plugin: 处理用户输入"
+          }
+        ]
+      }
+    ]
+  }
+}

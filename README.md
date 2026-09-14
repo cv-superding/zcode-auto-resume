@@ -98,6 +98,10 @@ node scripts/patch-icon-src.mjs apply       # 需先完全退出 ZCode
 
 两个补丁都会被 ZCode 升级覆盖，升级后重新 `apply`；`status` 查看状态，`revert` 还原。脚本自动探测常见安装位置，找不到时用环境变量 `ZCODE_CJS_PATH` / `ZCODE_ASAR_PATH` 指定，或新建 `scripts/.local-paths.json`（已 gitignore）写入本机路径。
 
+### 附赠：ZCode 插件开发技能
+
+本插件的开发全过程沉淀成了一个可复用技能 [skills/zcode-plugin-dev](skills/zcode-plugin-dev/)：六阶段工作流、钩子契约实测版（七事件 / 双字段名 / 3 次续跑上限 / turn.failed 盲区）、三种安装注册方式、踩坑排错表与脚手架脚本。复制到 `~/.zcode/skills/` 后，对 ZCode 说「帮我写个插件」即可触发。
+
 ### 配合原生目标模式 `/goal`
 
 ZCode 内置目标循环：`/goal <目标>` 设定后每回合自动校验是否达成，未达成即注入「继续」直到完成（`/goal pause|resume|clear` 管理，你主动停止会话时目标自动挂起）。与本插件互补：**`/goal` 管「目标没做完」，本插件管「回合被故障打断」**。注意目标循环自身没有失败重试——回合失败时目标保持 active，发一句「继续」或 `/goal resume` 即可秒接。
