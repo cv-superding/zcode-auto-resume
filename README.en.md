@@ -84,7 +84,7 @@ Intercepted directly by the UserPromptSubmit hook — **no model call, zero toke
 
 ## Known limits & client patches
 
-For the free Start Plan, "system busy" kills the turn via `turn.failed`, which fires **no hooks at all** (an architectural blind spot of the hook system), and the built-in retry table is hard-coded to 2 retries / 3 seconds. [`scripts/patch-retry-table.mjs`](scripts/patch-retry-table.mjs) extends it to 9 retries / ~4 minutes of backoff:
+For the free Start Plan, "system busy" kills the turn via `turn.failed`, which fires **no hooks at all** (an architectural blind spot of the hook system), and the built-in retry table is hard-coded to 2 retries / 3 seconds. [`scripts/patch-retry-table.mjs`](scripts/patch-retry-table.mjs) extends it to 31 backoff steps (7 escalating + 24 × 60s), a ~26-minute retry window — effectively re-queuing every minute until admitted:
 
 ```bash
 node scripts/patch-retry-table.mjs apply    # reversible, idempotent, backs up zcode.cjs
@@ -105,7 +105,7 @@ ZCode ships a built-in goal loop: `/goal <objective>` verifies progress after ev
 ## Configuration & troubleshooting
 
 > [!IMPORTANT]
-> **A red "Model request failed." banner ≠ broken plugin.** That banner means the turn *failed* (`turn.failed`) — ZCode fires **no hooks** on this path, so the plugin cannot act (architectural blind spot, see below). It's usually local network / proxy flakiness: the retry patch is already retrying up to 10 times inside the client; if it still fails, just send "continue" manually to pick up.
+> **A red "Model request failed." banner ≠ broken plugin.** That banner means the turn *failed* (`turn.failed`) — ZCode fires **no hooks** on this path, so the plugin cannot act (architectural blind spot, see below). It's usually local network / proxy flakiness: the retry patch is already retrying for up to ~26 minutes inside the client; if it still fails, just send "continue" manually to pick up.
 >
 > **How to verify the plugin is fine**: click the anchor icon next to the input box to inspect hook timings (green = healthy), or run `/auto-continue status` and look for "running".
 

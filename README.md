@@ -84,7 +84,7 @@
 
 ## 已知边界与客户端补丁
 
-ZCode 对免费 Start Plan 的「系统繁忙」走的是 `turn.failed` 路径，**不触发任何钩子**（钩子系统的架构盲区），且内置重试表写死为 2 次 / 3 秒。[`scripts/patch-retry-table.mjs`](scripts/patch-retry-table.mjs) 将其扩为 9 次 / 约 4 分钟退避，直接扛过繁忙窗口：
+ZCode 对免费 Start Plan 的「系统繁忙」走的是 `turn.failed` 路径，**不触发任何钩子**（钩子系统的架构盲区），且内置重试表写死为 2 次 / 3 秒。[`scripts/patch-retry-table.mjs`](scripts/patch-retry-table.mjs) 将其扩为 31 档退避（7 档爬升 + 24 档 60s），重试窗口约 26 分钟——繁忙排队期间每隔 1 分钟自动再试，基本等于等到排上为止：
 
 ```bash
 node scripts/patch-retry-table.mjs apply    # 可逆、幂等，自动备份 zcode.cjs
