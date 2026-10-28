@@ -39,7 +39,8 @@ const CANDIDATES = [
 // 版本自适应：定位「Start Plan 繁忙」重试表（特征：紧邻 start-plan provider 集合定义的 [1e3,2e3] 数组）
 // 0.16.x: M9r=[1e3,2e3]（1 处）；0.17.x: D3o/U3o=[1e3,2e3]（2 处）。不依赖变量名。
 // 10 档延迟：9 次重试，总等待约 228s
-const PATCHED_TABLE = '[1e3,2e3,5e3,1e4,15e3,3e4,45e3,6e4,6e4,6e4]';
+// 7 档爬升 + 24 档 60s：重试窗口约 25 分钟（不含每次尝试自身的耗时）
+const PATCHED_TABLE = '[1e3,2e3,5e3,1e4,15e3,3e4,45e3,6e4,6e4,6e4,6e4,6e4,6e4,6e4,6e4,6e4,6e4,6e4,6e4,6e4,6e4,6e4,6e4,6e4,6e4,6e4,6e4,6e4,6e4,6e4,6e4]';
 
 
 function locate() {
@@ -52,7 +53,7 @@ function locate() {
 function findTables(text) {
   // 匹配 <var>=[1e3,2e3]，且其前 200 字符内出现 start-plan 集合定义，避免误伤无关代码
   const out = [];
-  const re = /([\w$]+)=\[1e3,2e3(,5e3,1e4,15e3,3e4,45e3,6e4,6e4,6e4)?\]/g;
+  const re = /([\w$]+)=\[(?:1e3,2e3|1000,2000)[^\]]*\]/g;
   let m;
   while ((m = re.exec(text)) !== null) {
     const ctx = text.slice(Math.max(0, m.index - 400), m.index + 400);
@@ -65,7 +66,8 @@ function status(file) {
   const text = fs.readFileSync(file, 'utf8');
   const tables = findTables(text);
   if (tables.length === 0) return { state: 'not-found', tables };
-  const patched = tables.filter((x) => x.full.includes('5e3'));
+  const expected = /\[(?:1e3,2e3,5e3,1e4,15e3,3e4,45e3(?:,6e4){24}|1000,2000,5000,10000,15000,30000,45000(?:,60000){24})\]/;
+  const patched = tables.filter((x) => expected.test(x.full));
   return { state: patched.length === tables.length ? 'patched' : 'original', tables };
 }
 
@@ -85,11 +87,11 @@ function applyPatch(file) {
   let count = 0;
   for (let i = tables.length - 1; i >= 0; i -= 1) {
     const x = tables[i];
-    text = text.slice(0, x.start) + x.full.replace('[1e3,2e3]', PATCHED_TABLE) + text.slice(x.end);
+    text = text.slice(0, x.start) + x.full.slice(0, x.full.indexOf('[')) + PATCHED_TABLE + text.slice(x.end);
     count += 1;
   }
   fs.writeFileSync(file, text);
-  console.log(`已扩写 ${count} 处重试表：2 次(1s,2s) -> 9 次(1s~60s，约 4 分钟)`);
+  console.log(`已扩写 ${count} 处重试表 -> 31 档（7 档爬升 + 24 档 60s，重试窗口约 26 分钟）`);
   console.log('重启 ZCode 后生效');
 }
 
